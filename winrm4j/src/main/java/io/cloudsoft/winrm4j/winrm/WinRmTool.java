@@ -47,6 +47,10 @@ public class WinRmTool {
     private final String domain;
     private final String username;
     private final String password;
+    private final String proxyHost;
+    private final String proxyPort;
+    private final String proxyUsername;
+    private final String proxyPassword;
     private final String authenticationScheme;
     private Long operationTimeout;
     private Predicate<String> retryReceiveAfterOperationTimeout;
@@ -75,6 +79,10 @@ public class WinRmTool {
         private String domain;
         private String username;
         private String password;
+        private String proxyHost;
+        private String proxyPort;
+        private String proxyUsername;
+        private String proxyPassword;
         private String workingDirectory;
         private Map<String, String> environment;
         private HostnameVerifier hostnameVerifier;
@@ -108,7 +116,16 @@ public class WinRmTool {
             this.environment = WinRmClient.checkNotNull(environment, "environment");
             return this;
         }
-
+        public Builder proxy(String proxyHost, String proxyPort) {
+            this.proxyHost  = proxyHost;
+            this.proxyPort = proxyPort;
+            return this;
+        }
+        public Builder proxyCredentials(String proxyUsername, String proxyPassword) {
+            this.proxyUsername  = proxyUsername;
+            this.proxyPassword = proxyPassword;
+            return this;
+        }
         /**
          * @deprecated since 0.6.0
          */
@@ -175,7 +192,7 @@ public class WinRmTool {
 
         public WinRmTool build() {
             return new WinRmTool(getEndpointUrl(address, useHttps, port),
-                    domain, username, password, authenticationScheme,
+                    domain, username, password, proxyHost, proxyPort, proxyUsername, proxyPassword, authenticationScheme,
                     allowChunking, disableCertificateChecks, workingDirectory,
                     environment, hostnameVerifier, sslSocketFactory, sslContext,
                     context, requestNewKerberosTicket, payloadEncryptionMode);
@@ -220,7 +237,8 @@ public class WinRmTool {
     }
 
     private WinRmTool(String address, String domain, String username,
-                      String password, String authenticationScheme,
+                      String password,String proxyHost, String proxyPort,
+                      String proxyUsername, String proxyPassword, String authenticationScheme,
                       boolean allowChunking, boolean disableCertificateChecks, String workingDirectory,
                       Map<String, String> environment, HostnameVerifier hostnameVerifier,
                       SSLSocketFactory sslSocketFactory, SSLContext sslContext, WinRmClientContext context,
@@ -231,6 +249,10 @@ public class WinRmTool {
         this.domain = domain;
         this.username = username;
         this.password = password;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+        this.proxyUsername = proxyUsername;
+        this.proxyPassword = proxyPassword;
         this.authenticationScheme = authenticationScheme;
         this.workingDirectory = workingDirectory;
         this.environment = environment;
@@ -355,6 +377,12 @@ public class WinRmTool {
         }
         if (username != null && password != null) {
             builder.credentials(domain, username, password);
+        }
+        if(proxyHost !=null) {
+            builder.proxy(proxyHost, proxyPort);
+        }
+        if(proxyUsername!=null && proxyPassword!=null) {
+            builder.proxy(proxyUsername, proxyPassword);
         }
         if (disableCertificateChecks) {
             LOG.trace("Disabled check for https connections " + this);

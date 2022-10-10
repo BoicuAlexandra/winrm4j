@@ -270,6 +270,10 @@ public class WinRmClient implements AutoCloseable {
         String username = builder.username;
         String password = builder.password;
         String domain = builder.domain;
+        String proxyHost = builder.proxyHost;
+        String proxyPort = builder.proxyPort;
+        String proxyUsername = builder.proxyUsername;
+        String proxyPassword = builder.proxyPassword;
         boolean disableCertificateChecks = builder.disableCertificateChecks;
         boolean allowChunking = builder.allowChunking;
         HostnameVerifier hostnameVerifier = builder.hostnameVerifier;
@@ -421,6 +425,14 @@ public class WinRmClient implements AutoCloseable {
 
         httpClient.setClient(httpClientPolicy);
         httpClient.getClient().setAutoRedirect(true);
+        if(proxyHost!=null) {
+            httpClient.getClient().setProxyServer(proxyHost);
+            httpClient.getClient().setProxyServerPort(Integer.parseInt(proxyPort));
+        }
+        if(proxyUsername!=null && proxyPassword !=null){
+            httpClient.getProxyAuthorization().setUserName(proxyUsername);
+            httpClient.getProxyAuthorization().setPassword(proxyPassword);
+        }
     }
 
     /**

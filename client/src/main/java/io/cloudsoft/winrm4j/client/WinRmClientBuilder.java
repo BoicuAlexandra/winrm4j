@@ -50,6 +50,10 @@ public class WinRmClientBuilder {
     protected String domain;
     protected String username;
     protected String password;
+    protected String proxyHost;
+    protected String proxyPort;
+    protected String proxyUsername;
+    protected String proxyPassword;
     protected String workingDirectory;
     protected Locale locale;
     protected long operationTimeout;
@@ -103,6 +107,24 @@ public class WinRmClientBuilder {
         this.domain = domain;
         this.username = WinRmClient.checkNotNull(username, "username");
         this.password = WinRmClient.checkNotNull(password, "password");
+        return this;
+    }
+
+    /**
+     * proxy host and port
+     */
+    public WinRmClientBuilder proxy(String proxyHost, String proxyPort) {
+        this.proxyHost  = proxyHost;
+        this.proxyPort = proxyPort;
+        return this;
+    }
+
+    /**
+     * Credentials to use for proxy authentication
+     */
+    public WinRmClientBuilder proxyCredentials(String proxyUsername, String proxyPassword) {
+        this.proxyUsername  = proxyUsername;
+        this.proxyPassword = proxyPassword;
         return this;
     }
 
